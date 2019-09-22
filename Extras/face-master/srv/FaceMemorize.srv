@@ -1,5 +1,0 @@
-string name
-bool cvWindow
-uint8 n_images
----
-string person
