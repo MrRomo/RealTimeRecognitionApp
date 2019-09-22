@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+personGroup.pckl
+personModel.pckl
+personsGroupCloud.pckl
+
 # C extensions
 *.so
 
