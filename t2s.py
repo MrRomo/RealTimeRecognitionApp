@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from gtts import gTTS
 import os
 
-file = "file.mp3"
+file = "file2.mp3"
 
-tts1 = gTTS('Insertar caracteristica 1', lang='es-us', slow=False)
-tts2 = gTTS('Insertar caracteristica 2', lang='es-us', slow=False)
+tts1 = gTTS('Insertar característica 1', lang='es-us', slow=False)
+tts2 = gTTS('Insertar característica 2', lang='es-us', slow=False)
 
 with open(file, "wb") as archivo:
     tts1.write_to_fp(archivo)
