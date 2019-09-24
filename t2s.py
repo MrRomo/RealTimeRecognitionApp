@@ -1,13 +1,17 @@
 from gtts import gTTS
+from neural import Neural
 import os
 
-file = "file.mp3"
+class t2s:
+    def __init__(self, person):
+        self.nombre = person.get('name')
+        self.edad = person.get('age')
+        self.genero = person.get('gender')
+        self.cabello = person.get('hairColor')
+        self.gafas = person.get('glasses')
 
-tts1 = gTTS('Insertar caracteristica 1', lang='es-us', slow=False)
-tts2 = gTTS('Insertar caracteristica 2', lang='es-us', slow=False)
 
-with open(file, "wb") as archivo:
-    tts1.write_to_fp(archivo)
-    tts2.write_to_fp(archivo)
 
-os.system("mpg123 " + file)
+
+    def play(self):
+        
