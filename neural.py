@@ -53,7 +53,7 @@ class Neural:
         color = (0, 0, 255)
         if(isInFront):
            color = (0, 255, 0)
-        face_names = ["Desconocido"]
+        face_names = ["Desconocido"]*len(face_locations)
         if (len(self.personModel)):
             face_names = []
             for face_encoding in face_encodings:
@@ -61,13 +61,13 @@ class Neural:
                 name = "Desconocido"
                 matches = face_recognition.compare_faces(self.personModel, face_encoding)
                 face_distances = face_recognition.face_distance(self.personModel, face_encoding)
-                print(self.personModel,matches,face_distances)
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = self.names[best_match_index]
                 face_names.append(name)
 
         # Display the results
+        print(len(face_locations),face_names, len(face_encodings))
         for (top, right, bottom, left), name in zip(face_locations, face_names):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
@@ -78,7 +78,7 @@ class Neural:
             cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
             cv2.rectangle(frame, (left, bottom - 35),(right, bottom), color, cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, bottom - 12),font, 0.7, (255, 255, 255), 1)
+            cv2.putText(frame, name+str(), (left + 6, bottom - 12),font, 0.7, (255, 255, 255), 1)
 
         # Display the resulting image
         return [frame, isInFront]
