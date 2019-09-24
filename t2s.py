@@ -34,6 +34,8 @@ class t2s:
             tts2 = gTTS(self.anos[randint(0, 2)], 'que tienes unos ', self.edad, 'años de edad', lang='es-us', slow=False)
             tts3 = gTTS('', self.lentes, '', self.despedida[randint(0, 2)], lang='es-us', slow=False)
             with open(file, "wb") as archivo:
-                tts.write_to_fp(archivo)
+                tts1.write_to_fp(archivo)
+                tts2.write_to_fp(archivo)
+                tts3.write_to_fp(archivo)
             os.system("mpg123 " + file)
             self.state = 0
