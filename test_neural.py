@@ -7,7 +7,7 @@ if __name__ == "__main__":
         frame = neural.neural_detector()
         cv2.imshow('Video', frame[0])
         if cv2.waitKey(1) & 0xFF == ord('t'):
-            neural.neural_recognition('Persona 2')
+            neural.neural_recognition('Dilan')
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

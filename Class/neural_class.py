@@ -48,9 +48,11 @@ class NeuralClass:
         self.hair = []
         self.glasses = []
         self.utils = Utils()
-        self.COLS = ['Male', 'Asian', 'White', 'Black',  'Baby', 'Child', 'Youth', 'Middle Aged', 'Senior', 'Black Hair', 'Blond Hair','Brown Hair', 'Bald', 'No eyewear', 'Eyeglasses', 'Sunglasses', 'Mustache', 'Smiling', 'Curly Hair', 'Wavy Hair', 'Straight Hair']
+        self.COLS = ['Male', 'Asian', 'White', 'Black',  'Baby', 'Child', 'Youth', 'Middle Aged', 'Senior', 'Black Hair', 'Blond Hair',
+                     'Brown Hair', 'Bald', 'No eyewear', 'Eyeglasses', 'Sunglasses', 'Mustache', 'Smiling', 'Curly Hair', 'Wavy Hair', 'Straight Hair']
         self.N_UPSCLAE = 1
-        self.clf, self.labels = self.getModel("Models/race_and_gender_model.pkl")
+        self.clf, self.labels = self.getModel(
+            "Models/race_and_gender_model.pkl")
         self.personT = []
         # inicializa la clase recortando, guardando las caras y descartando los frames malos
         self.faces = self.cropper()
@@ -70,26 +72,28 @@ class NeuralClass:
             frame_area = frame.shape[0]*frame.shape[1]
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
             person_loc = face_recognition.face_locations(small_frame)
-            person_loc.sort(key=self.utils.sortLocation, reverse = False)
+            person_loc.sort(key=self.utils.sortLocation, reverse=False)
             if(len(person_loc)):  # detecta si hay personas
                 print("Person detect: {}".format(len(person_loc)))
                 people, areas = self.utils.setDictionary(person_loc)
                 facesT = []
                 cordT = []
                 for person in person_loc:
-                    t, r, b, l = self.utils.increase(list(np.asarray(person)*4))
+                    t, r, b, l = self.utils.increase(
+                        list(np.asarray(person)*4))
                     # recortar imagenes image[y:y+h, x:x+w]
                     facesT.append(frame[t:b, l:r])
                     cordT.append((t, r, b, l))
 
-                self.personT= [facesT,cordT, people]
+                self.personT = [facesT, cordT, people]
                 # ordena las caras de mayor a menor detectadas en el frame
                 # people.sort(key=self.utils.sortDictionary, reverse=True)
-                # encuentra la cara mas grande                
+                # encuentra la cara mas grande
                 person_location = person_loc[np.argmax(areas)]
                 people = people[np.argmax(areas)]
                 # top, rigth, bottom, left (t,r,b,l)
-                t, r, b, l = self.utils.increase(list(np.asarray(person_location)*4))
+                t, r, b, l = self.utils.increase(
+                    list(np.asarray(person_location)*4))
                 percent = max(areas)*100/float(frame_area)
                 if(percent >= self.percent):
                     # recortar imagenes image[y:y+h, x:x+w]
@@ -118,7 +122,8 @@ class NeuralClass:
         person_encoding = []
         if len(self.detect()):
             for i in range(len(self.faces)):
-                person_encoding.append(face_recognition.face_encodings(self.faces[i])[0])
+                person_encoding.append(
+                    face_recognition.face_encodings(self.faces[i])[0])
 
         return person_encoding
 
@@ -132,19 +137,22 @@ class NeuralClass:
     def compare(self, known_faces, personGroup):
 
         people = None
-        if len(self.detect()): people = self.people[0]
+        if len(self.detect()):
+            people = self.people[0]
         if len(self.detect()) and len(personGroup):
             person_encoding = self.encode_one()
-          
-            matches = face_recognition.compare_faces(known_faces, person_encoding, tolerance=self.tolerance)
 
-            face_distances = face_recognition.face_distance(known_faces, person_encoding)
+            matches = face_recognition.compare_faces(
+                known_faces, person_encoding, tolerance=self.tolerance)
+            face_distances = face_recognition.face_distance(
+                known_faces, person_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 people = personGroup[best_match_index]
-                people['accuracy'] = 1-face_distances[best_match_index]*self.tolerance
+                people['accuracy'] = 1 - \
+                    face_distances[best_match_index]*self.tolerance
                 people['faceRectangle'] = self.people[0]['faceRectangle']
-        print ("people from compare {}".format(people ))
+        print ("people from compare {}".format(people))
         return people
 
     def clasifier(self):
@@ -152,12 +160,14 @@ class NeuralClass:
         prediction = None
         if len(self.detect()):
             face_encodings = self.encode()
-            prediction = pd.DataFrame(self.clf.predict_proba(face_encodings), columns=self.labels)
+            prediction = pd.DataFrame(self.clf.predict_proba(
+                face_encodings), columns=self.labels)
             prediction = prediction.loc[:, self.COLS]
             self.glasses = prediction[['Eyeglasses', 'Sunglasses']]
             print prediction
             for row in prediction.iterrows():
-                self.gender.append('male' if row[1]['Male'] > 0.5 else 'female')
+                self.gender.append(
+                    'male' if row[1]['Male'] > 0.5 else 'female')
                 self.race.append(np.argmax(row[1][1:4]))
                 self.age.append(np.argmax(row[1][4:9]))
                 self.hair.append(np.argmax(row[1][9:13]))
@@ -171,13 +181,14 @@ class NeuralClass:
         glass = self.glasses["Eyeglasses"]
         desviacion = glass.std()
         media = glass.mean()
-        max =  glass[np.argmax(glass)]
-        min =  glass[np.argmin(glass)]
+        max = glass[np.argmax(glass)]
+        min = glass[np.argmin(glass)]
         print glass
-        print "Media: {} - Desviacion : {} - Max: {} - Min: {}".format(media,desviacion,max,min)
+        print "Media: {} - Desviacion : {} - Max: {} - Min: {}".format(
+            media, desviacion, max, min)
         if ((media > 0.2)):
             glasses = "Yes"
-        res= {"res": glasses, "percent": None}
+        res = {"res": glasses, "percent": None}
         return res
 
     def getAge(self):
@@ -200,8 +211,9 @@ class NeuralClass:
 class Utils:
     def sortDictionary(self, val):
         return val['faceRectangle']['width']*val['faceRectangle']['left']
-    def sortLocation(self, val):
-        return val[3]
+
+    def sortLocation(self, face_location):
+        return (face_location[1]-face_location[3])*(face_location[2]-face_location[0])
 
     def setDictionary(self, locations):
         people = list()
@@ -220,7 +232,7 @@ class Utils:
                 "glasses":  None
             }
             dictionary_of_features = {'faceId': None, 'faceRectangle': {'width': int(width), 'top': int(
-                face_location[0]), 'height': int(height), 'left': int(face_location[3])}, 'faceAttributes': faceAtr }
+                face_location[0]), 'height': int(height), 'left': int(face_location[3])}, 'faceAttributes': faceAtr}
             people.append(dictionary_of_features)
             areas.append(width*height)
             # print ('areas:',areas)
@@ -228,9 +240,10 @@ class Utils:
 
     def increase(self, dimentions):
         dim = list()
-        prop = 1.07
-        dim.append(int(dimentions[0]*0.3))
-        dim.append(int(dimentions[1]*prop))
-        dim.append(int(dimentions[2]*prop))
-        dim.append(int(dimentions[3]*0.92))
+        iProp = 1.1
+        dProp = 0.4
+        dim.append(int(dimentions[0]*dProp))
+        dim.append(int(dimentions[1]*iProp))
+        dim.append(int(dimentions[2]*iProp))
+        dim.append(int(dimentions[3]*dProp))
         return dim
