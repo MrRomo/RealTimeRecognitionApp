@@ -17,11 +17,11 @@ class Neural:
         self.personModel = None
         self.names = []
         self.unpack()
-        self.videoCapture = cv2.VideoCapture(0)
+        self.videoCapture = cv2.VideoCapture(1)
         self.known_face_names = []
         self.known_face_encodings = [[0]]
         self.frame = None
-        self.percent = 3
+        self.percent = 0
         self.state = 0
         
     def unpack(self):
