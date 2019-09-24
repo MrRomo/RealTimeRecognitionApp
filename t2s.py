@@ -8,13 +8,14 @@ class t2s:
         self.state = 0
 
     def play(self, person):
+        file = "file.mp3"
         if (self.state == 0):
             self.state = 1
             self.file = "file.mp3"
             self.nombre = person.get('name')
             self.edad = person.get('age')
             self.genero = person.get('gender')
-            self.cabello = person.get('hairColor')
+            self.cabello = person.get('hairColor') #['hair']['hairColor'][0]['color']
             self.gafas = person.get('glasses')
 
             self.nina = ['Hermosa', 'Linda', 'Preciosa']
@@ -23,19 +24,21 @@ class t2s:
             self.despedida = ['Fue agradable conocerte. En una proxima ocasion espero verte', 'Sin duda eres genial, me encanto saludarte', 'Eres muy amable y agradable, me ha encantado conocerte']
             if (self.gafas != 'NoGlasses'):
                 self.lentes = 'Me encantan tus Lentes'
-            if (self.genero == 'Female'):
-                self.gene = 'una niña'
+            if (self.genero == 'female'):
+                self.gene = 'una princesa'
                 self.ternura = self.nina[randint(0, 2)]
-            if (self.genero == 'Male'):
-                self.gene = 'un niño'
+            if (self.genero == 'male'):
+                self.gene = 'un hombresito'
                 self.ternura = self.nino[randint(0, 2)]
-
-            tts1 = gTTS('Hola ', self.nombre, 'Es un placer saludarte.', 'Eres ', self.gene, self.ternura, 'Vengo con mis amigos de Unimagdalena', lang='es-us', slow=False)
-            tts2 = gTTS(self.anos[randint(0, 2)], 'que tienes unos ', self.edad, 'años de edad', lang='es-us', slow=False)
-            tts3 = gTTS('', self.lentes, '', self.despedida[randint(0, 2)], lang='es-us', slow=False)
-            with open(file, "wb") as archivo:
-                tts1.write_to_fp(archivo)
-                tts2.write_to_fp(archivo)
-                tts3.write_to_fp(archivo)
+            msg = 'Hola ' + self.nombre + ', Es un placer saludarte. ' + ' Eres ' + self.gene + ' ' + self.ternura + '. Vengo junto con mis amigos de Unimagdalena.  ' + self.anos[randint(0, 2)] + ' que tienes unos ' + str(int(self.edad)) + ' anos de edad. ' + self.despedida[randint(0, 2)]
+            print msg
+            tts1 = gTTS(msg, lang='es-us', slow=False)
+            #tts2 = gTTS(self.anos[randint(0, 2)], 'que tienes unos ', self.edad, 'años de edad', lang='es-us', slow=False)
+            #tts3 = gTTS('', self.lentes, '', self.despedida[randint(0, 2)], lang='es-us', slow=False)
+            #with open(file, "wb") as archivo:
+            #    tts1.write_to_fp(archivo)
+                #tts2.write_to_fp(archivo)
+                #tts3.write_to_fp(archivo)
+            tts1.save('file.mp3')
             os.system("mpg123 " + file)
             self.state = 0
