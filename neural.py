@@ -5,7 +5,7 @@ from Class.neural_class import Utils
 import face_recognition
 import cv2
 import numpy as np
-
+from t2s import t2s
 
 class Neural:
     def __init__(self):
@@ -23,6 +23,7 @@ class Neural:
         self.frame = None
         self.percent = 13
         self.upload = 0
+        self.spech = t2s()
         
     def unpack(self):
         self.personGroup = self.packing.unpack(self.fileName[0])
@@ -115,6 +116,7 @@ class Neural:
                 self.packing.pack(self.personGroup, self.fileName[0])
                 self.packing.pack(self.personModel, self.fileName[1])
                 self.unpack()
+                self.spech.play(person)
         self.upload = 0 #caracterizacion finalizada
         return person
 
