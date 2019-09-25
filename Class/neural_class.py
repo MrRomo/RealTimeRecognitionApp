@@ -209,6 +209,13 @@ class NeuralClass:
 
 
 class Utils:
+
+    def getPercent(self,shape, loc):
+        area = (loc[1]-loc[3])*(loc[2]-loc[0])
+        frame_area = shape[0]*shape[1]
+        percent = area*100/float(frame_area)
+        return percent
+
     def sortDictionary(self, val):
         return val['faceRectangle']['width']*val['faceRectangle']['left']
 

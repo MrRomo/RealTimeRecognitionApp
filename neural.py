@@ -21,8 +21,8 @@ class Neural:
         self.known_face_names = []
         self.known_face_encodings = [[0]]
         self.frame = None
-        self.percent = 0
-        self.state = 0
+        self.percent = 13
+        self.upload = 0
         
     def unpack(self):
         self.personGroup = self.packing.unpack(self.fileName[0])
@@ -49,10 +49,6 @@ class Neural:
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
         self.frame, isInFront = self.cropper(frame,face_locations)
 
-
-        color = (0, 0, 255)
-        if(isInFront):
-           color = (0, 255, 0)
         face_names = ["Desconocido"]*len(face_locations)
         if (len(self.personModel)):
             face_names = []
@@ -74,7 +70,8 @@ class Neural:
             right *= 4
             bottom *= 4
             left *= 4
-# str((top,right,bottom,left))
+            percent = self.utils.getPercent(frame.shape,(top, right, bottom, left))
+            color = (0, 0, 255) if (percent<self.percent) else(0, 255, 0)
             cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
             cv2.rectangle(frame, (left, bottom - 35),(right, bottom), color, cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
@@ -102,10 +99,10 @@ class Neural:
 
         return [frame, False]
 
-    def neural_recognition(self, name):
-        self.state = 1 #trabajando en la caracterizacion
-        person = self.person_cloud.detectPerson(self.frame)
-        face_encodings = face_recognition.face_encodings(self.frame)
+    def neural_recognition(self, name, frame):
+        self.upload = 1 #trabajando en la caracterizacion
+        person = self.person_cloud.detectPerson(frame)
+        face_encodings = face_recognition.face_encodings(frame)
         print("face encoding: " + str(len(face_encodings)))
         if(len(person)):
             person = person[0]
@@ -118,6 +115,6 @@ class Neural:
                 self.packing.pack(self.personGroup, self.fileName[0])
                 self.packing.pack(self.personModel, self.fileName[1])
                 self.unpack()
-        self.state = 0 #caracterizacion finalizada
+        self.upload = 0 #caracterizacion finalizada
         return person
 
