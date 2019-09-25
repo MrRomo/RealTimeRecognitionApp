@@ -86,7 +86,7 @@ class Ui_MainWindow(object):
         cv2.destroyAllWindows()
 
     def save_person(self):
-        self.name = 'ricardo'
+        self.name = self.textEdit.toPlainText()
         self.frame = self.neural.frame
         self.neural.neural_recognition(self.name, self.frame)
 

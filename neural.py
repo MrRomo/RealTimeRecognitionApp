@@ -29,8 +29,10 @@ class Neural:
         self.personGroup = self.packing.unpack(self.fileName[0])
         self.personModel = self.packing.unpack(self.fileName[1])
         self.names = []
+        self.ages = []
         for person in self.personGroup:
             self.names.append(person['name'])
+            self.ages.append(person['faceAttributes']['age'])
         print(self.personGroup)
         print(self.personModel)
 
@@ -51,21 +53,26 @@ class Neural:
         self.frame, isInFront = self.cropper(frame,face_locations)
 
         face_names = ["Desconocido"]*len(face_locations)
+        ages = [' ']*len(face_locations)
         if (len(self.personModel)):
             face_names = []
+            ages = []
             for face_encoding in face_encodings:
                 # See if the face is a match for the known face(s)
                 name = "Desconocido"
+                age = " "
                 matches = face_recognition.compare_faces(self.personModel, face_encoding)
                 face_distances = face_recognition.face_distance(self.personModel, face_encoding)
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = self.names[best_match_index]
+                    age = self.ages[best_match_index]
                 face_names.append(name)
+                ages.append(age)
 
         # Display the results
         # print(len(face_locations),face_names, len(face_encodings))
-        for (top, right, bottom, left), name in zip(face_locations, face_names):
+        for (top, right, bottom, left), name, age in zip(face_locations, face_names, ages):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
             right *= 4
@@ -76,7 +83,7 @@ class Neural:
             cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
             cv2.rectangle(frame, (left, bottom - 35),(right, bottom), color, cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame,name , (left + 6, bottom - 12),font, 0.7, (255, 255, 255), 1)
+            cv2.putText(frame,name + " " + str(age) , (left + 6, bottom - 12),font, 0.7, (255, 255, 255), 1)
 
         # Display the resulting image
         return [frame, isInFront]

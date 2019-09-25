@@ -28,10 +28,10 @@ class t2s:
             self.nombre = person.get('name')
             self.edad = person['faceAttributes']['age']
             self.genero = person['faceAttributes']['gender']
-            self.cabello = person['faceAttributes']['hair']['hairColor'][0]['color']
+            # self.cabello = person['faceAttributes']['hair']['hairColor'][0]['color']
             self.gafas = person['faceAttributes']['glasses']
 
-            print(self.nombre, self.edad, self.genero, self.cabello, self.gafas)
+            print(self.nombre, self.edad, self.genero, self.gafas)
 
             self.nina = ['Hermosa', 'Linda', 'Preciosa']
             self.nino = ['Campeon', 'muy Lindo', 'muy Hermoso']
