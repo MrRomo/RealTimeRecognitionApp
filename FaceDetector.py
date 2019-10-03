@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
 
     def __init__(self):
         self.image = None
-        self.state = 0
+        self.state = 1
         self.neural = Neural()
 
     def setupUi(self, MainWindow):
@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "FaceDetector"))
-        self.pushButton.setText(_translate("MainWindow", "Iniciar"))
+        self.pushButton.setText(_translate("MainWindow", "Detener"))
         self.textEdit.setPlaceholderText(
             _translate("MainWindow", "Ingrese el nombre"))
         self.pushButton_3.setText(_translate("MainWindow", "Guardar"))
@@ -77,10 +77,13 @@ class Ui_MainWindow(object):
     def run_neural(self):
         while (True):
             if(self.state):
-                frame = self.neural.neural_detector()
-                cv2.imshow('Video', frame[0])
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+                try:
+                    frame = self.neural.neural_detector()
+                    cv2.imshow('Video', frame[0])
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        break
+                except IndexError as identifier:
+                    print('an error ocurred', identifier)
         # Release handle to the webcam
         self.neural.videoCapture.release()
         cv2.destroyAllWindows()
@@ -88,6 +91,11 @@ class Ui_MainWindow(object):
     def save_person(self):
         self.name = self.textEdit.toPlainText()
         self.frame = self.neural.frame
+        hilo2 = threading.Thread(target=self.runRecognition)
+        hilo2.daemon = True
+        hilo2.start()
+
+    def runRecognition(self):
         self.neural.neural_recognition(self.name, self.frame)
 
 

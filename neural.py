@@ -24,6 +24,7 @@ class Neural:
         self.percent = 13
         self.upload = 0
         self.spech = t2s()
+        self.color = {"rojo":(0, 0, 255), 'verde':(0, 255, 0), 'azul':(255, 50, 50)}
         
     def unpack(self):
         self.personGroup = self.packing.unpack(self.fileName[0])
@@ -63,12 +64,15 @@ class Neural:
                 age = " "
                 matches = face_recognition.compare_faces(self.personModel, face_encoding)
                 face_distances = face_recognition.face_distance(self.personModel, face_encoding)
-                best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
-                    name = self.names[best_match_index]
-                    age = self.ages[best_match_index]
-                face_names.append(name)
-                ages.append(age)
+                if(len(face_distances)):
+                    best_match_index = np.argmin(face_distances)
+                    print('List index best match :', best_match_index)
+                    if matches[best_match_index]:
+                        print(len(self.names))
+                        name = self.names[best_match_index]
+                        age = self.ages[best_match_index]
+                    face_names.append(name)
+                    ages.append(age)
 
         # Display the results
         # print(len(face_locations),face_names, len(face_encodings))
@@ -79,7 +83,9 @@ class Neural:
             bottom *= 4
             left *= 4
             percent = self.utils.getPercent(frame.shape,(top, right, bottom, left))
-            color = (0, 0, 255) if (percent<self.percent) else(0, 255, 0)
+            color = self.color['rojo'] if (percent<self.percent) else self.color['verde']
+            color = self.color['azul'] if (self.upload) else color
+
             cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
             cv2.rectangle(frame, (left, bottom - 35),(right, bottom), color, cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
@@ -123,7 +129,7 @@ class Neural:
                 self.packing.pack(self.personGroup, self.fileName[0])
                 self.packing.pack(self.personModel, self.fileName[1])
                 self.unpack()
-                self.spech.play(person)
+                # self.spech.play(person)
         self.upload = 0 #caracterizacion finalizada
         return person
 
