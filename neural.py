@@ -17,6 +17,7 @@ class Neural:
         self.personModel = None
         self.names = []
         self.unpack()
+        print(cv2.VideoCapture())
         self.videoCapture = cv2.VideoCapture(1)
         self.known_face_names = []
         self.known_face_encodings = [[0]]
@@ -24,6 +25,7 @@ class Neural:
         self.percent = 13
         self.upload = 0
         self.spech = t2s()
+        self.p = 1
         self.color = {"rojo":(0, 0, 255), 'verde':(0, 255, 0), 'azul':(255, 50, 50)}
         
     def unpack(self):
@@ -42,7 +44,7 @@ class Neural:
         face_locations = []
         face_encodings = []
         face_names = []
-
+        
         frame = self.videoCapture.read()[1]
         # frame = cv2.imread('Resources/gente2.jpg')
 
@@ -52,6 +54,7 @@ class Neural:
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
         self.frame, isInFront = self.cropper(frame,face_locations)
+        frame = cv2.resize(frame, (0, 0), fx=self.p, fy=self.p)
 
         face_names = ["Desconocido"]*len(face_locations)
         ages = [' ']*len(face_locations)
@@ -78,10 +81,10 @@ class Neural:
         # print(len(face_locations),face_names, len(face_encodings))
         for (top, right, bottom, left), name, age in zip(face_locations, face_names, ages):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-            top *= 4
-            right *= 4
-            bottom *= 4
-            left *= 4
+            top *= int(4*self.p)
+            right *= int(4*self.p)
+            bottom *= int(4*self.p)
+            left *= int(4*self.p)
             percent = self.utils.getPercent(frame.shape,(top, right, bottom, left))
             color = self.color['rojo'] if (percent<self.percent) else self.color['verde']
             color = self.color['azul'] if (self.upload) else color
